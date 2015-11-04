@@ -4,7 +4,13 @@ class OrdersController < ApplicationController
   # GET /orders
   # GET /orders.json
   def index
-    @orders = Order.all
+    @orders = Order.order('created_at DESC').paginate :page => params[:page],
+      :per_page => 10
+
+    respond_to do |format|
+      format.html 
+      format.xml {render :xml => @orders}
+    end
   end
 
   # GET /orders/1
@@ -51,12 +57,7 @@ class OrdersController < ApplicationController
     end
   end
 
-  def add_line_items_from_cart(cart)
-    cart.line_items.each do |item|
-      item.cart_id = nil
-      line_items << item
-    end
-  end
+
 
   # PATCH/PUT /orders/1
   # PATCH/PUT /orders/1.json
